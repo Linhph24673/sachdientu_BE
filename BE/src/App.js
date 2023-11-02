@@ -1,14 +1,10 @@
-import "./App.css";
-
-import { BrowserRouter as Router} from "react-router-dom";
+import express from "express";
 
 
-function App() {
-  return (
-    <Router>
-     
-    </Router>
-  );
-}
 
-export default App;
+
+
+const app = express();
+
+
+export const viteNodeApp = app;
