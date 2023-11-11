@@ -1,95 +1,113 @@
-import Product from "../models/product.js";
-import productSchema from "../schemas/product";
+import Product from "../model/product.js";
 
-export const getAll = async (req, res) => {
-  try {
-    const products = await Product.find();
-    if (products.length === 0) {
-      res.status(404).json({
-        message: "Không có sản phẩm nào",
-      });
-    }
-    return res.status(200).json(products);
-  } catch (error) {
-    return res.status(500).json({
-      message: error,
-    });
-  }
-};
-export const get = async (req, res) => {
-  try {
-    const product = await Product.findById(req.params.id);
-    if (!product) {
-      return res.status(404).json({
-        message: "Not found",
-      });
-    }
-    return res.status(200).json({
-      message: "Product found",
-      product,
-    });
-  } catch (error) {
-    return res.status(500).json({
-      message: "Lỗi server",
-    });
-  }
-};
-export const create = async (req, res) => {
-  try {
-    const { error } = productSchema.validate(req.body);
-    if (error) {
-      return res.status(400).json({
-        message: error.details[0].message,
-      });
-    }
-
-    const product = await Product.create(req.body);
-    if (!product) {
-      return res.status(400).json({
-        message: "Không thể tạo sản phẩm",
-      });
-    }
-    return res.status(201).json({
-      message: "Thêm sản phẩm thành công",
-      data: product,
-    });
-  } catch (error) {
-    return res.status(500).json({
-      message: error,
-    });
-  }
-};
-export const remove = async (req, res) => {
-  try {
-    const product = await Product.findByIdAndDelete(req.params.id);
-    return res.status(200).json({
-      message: "Sản phẩm đã được xóa thành công",
-      product,
-    });
-  } catch (error) {
-    return res.status(500).json({
-      message: error,
-    });
-  }
+const showProduct = async (req, res) => {
+  const products = await Product.find();
+  return res.json(products);
 };
 
-export const update = async (req, res) => {
-  try {
-    const product = await Product.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-    });
-    if (!product) {
-      return res.status(404).json({
-        message: "Không tìm thấy sản phẩm",
-      });
-    }
-    return res.status(200).json({
-      message: "Sản phẩm đã được cập nhật thành công",
-      data: product,
-    });
-  } catch (error) {
-    return res.status(500).json({
-      message: error,
+const search = async (req, res) => {
+  const searchTerm = req.query.name;
+  const product = await Product.find({ name: new RegExp(searchTerm, 'i') });
+  return res.json(product)
+};
+
+
+const addProduct = async (req, res) => {
+  const { name,author, price, img, cate, desc } = req.body;
+
+  if (!name || !price || !author || !img || !cate || !desc) {
+    return res.json({
+      success: false,
+      message: "Khong duoc bo trong cac truong",
     });
   }
+  if (name.length < 6) {
+    return res.json({
+      success: false,
+      message: "Ten San Pham Phai > 6 ki tu",
+    });
+  }
+  if (price == 0) {
+    return res.json({
+      success: false,
+      message: "Gia San Pham Phai > 0",
+    });
+  }
+  const product = await Product.create(req.body);
+
+  return res.status(200).json({
+    success: true,
+    message: "Thêm sản phẩm thành công",
+    product,
+  });
 };
+
+const productID = async (req, res) => {
+  const product = await Product.findById(req.params.id);
+
+  return res.json(product);
+};
+
+const updateProduct = async (req, res) => {
+  const oldProduct = await Product.findById(req.params.id);
+  const product = await Product.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+  });
+
+  if (
+    oldProduct.name == product.name &&
+    oldProduct.author == product.author &&
+    oldProduct.price == product.price &&
+    oldProduct.img == product.img &&
+    oldProduct.desc == product.desc &&
+    oldProduct.cate == product.cate
+  ) {
+    return res.json({
+      success: false,
+      message: "Phai Thay Doi It Nhat Mot Truong",
+    });
+  }
+
+  if (
+    !product.name ||
+    !product.author ||
+    !product.price ||
+    !product.img ||
+    !product.cate ||
+    !product.desc
+  ) {
+    return res.json({
+      success: false,
+      message: "Khong duoc bo trong cac truong",
+    });
+  }
+  if (product.name.length < 6) {
+    return res.json({
+      success: false,
+      message: "Ten San Pham Phai > 6 ki tu",
+    });
+  }
+  if (product.price == 0) {
+    return res.json({
+      success: false,
+      message: "Gia San Pham Phai > 0",
+    });
+  }
+
+  return res.json({
+    success: true,
+    message: "Cập nhật sản phẩm thành công",
+    data: product,
+  });
+};
+
+const deleteProduct = async (req, res) => {
+  const product = await Product.findByIdAndDelete(req.params.id);
+
+  return res.json({
+    message: "Xóa sản phẩm thành công",
+    product,
+  });
+};
+
+export { showProduct, addProduct, productID, updateProduct, deleteProduct, search}

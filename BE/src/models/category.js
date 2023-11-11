@@ -5,8 +5,15 @@ const { Schema } = mongoose;
 const categorySchema = new Schema({
   name: {
     type: String,
-    require: true,
+    required: true,
     minLength: 3,
+  },
+  description: {
+    type: String,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
   },
 });
 

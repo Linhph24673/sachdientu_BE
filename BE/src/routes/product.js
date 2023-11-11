@@ -1,12 +1,14 @@
 import express from "express";
-import { create, get, getAll, remove, update } from "../controllers/product.js";
-import { checkPermission } from "../middlewares/checkPermision";
+
+import { showProduct, addProduct, updateProduct, deleteProduct, productID, search } from "../controller/product.js";
+
 const router = express.Router();
 
-router.get("/", getAll);
-router.get("/:id", get);
-router.post("/", checkPermission, create);
-router.delete("/:id", checkPermission, remove);
-router.patch("/:id", checkPermission, update);
+router.get('/show', showProduct);
+router.get('/showProductDetail/:id', productID);
+router.post('/add', addProduct);
+router.delete('/delete/:id', deleteProduct);
+router.patch('/update/:id', updateProduct);
+router.get('/search', search);
 
 export default router;

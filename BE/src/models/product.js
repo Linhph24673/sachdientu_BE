@@ -3,14 +3,12 @@ import mongoose from "mongoose";
 const { Schema } = mongoose;
 
 const productSchema = new Schema({
-  name: {
-    type: String,
-    require: true,
-    minLength: 3,
-  },
-  price: {
-    type: Number,
-  },
-});
+    name: String || Number,
+    author : String,
+    price: Number,
+    desc: String,
+    img: String,
+    cate: Number
+})
 
-export default mongoose.model("Product", productSchema);
+export default mongoose.model("Product", productSchema)
