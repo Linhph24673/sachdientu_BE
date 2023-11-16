@@ -13,9 +13,9 @@ const search = async (req, res) => {
 
 
 const addProduct = async (req, res) => {
-  const { name,author, price, img, cate, desc } = req.body;
+  const { name, price, img, cate, desc } = req.body;
 
-  if (!name || !price || !author || !img || !cate || !desc) {
+  if (!name || !price || !img || !cate || !desc) {
     return res.json({
       success: false,
       message: "Khong duoc bo trong cac truong",
@@ -56,7 +56,6 @@ const updateProduct = async (req, res) => {
 
   if (
     oldProduct.name == product.name &&
-    oldProduct.author == product.author &&
     oldProduct.price == product.price &&
     oldProduct.img == product.img &&
     oldProduct.desc == product.desc &&
@@ -70,7 +69,6 @@ const updateProduct = async (req, res) => {
 
   if (
     !product.name ||
-    !product.author ||
     !product.price ||
     !product.img ||
     !product.cate ||
